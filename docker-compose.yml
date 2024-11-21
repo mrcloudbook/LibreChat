@@ -5,7 +5,7 @@ services:
   api:
     container_name: LibreChat
     ports:
-      - "${PORT}:${PORT}"
+      - "${SERVICE_PORT:-3080}:${SERVICE_PORT:-3080}"
     depends_on:
       - mongodb
       - rag_api
@@ -15,15 +15,19 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      - HOST=0.0.0.0
+      - HOST=${SERVICE_HOST}
+      - PORT=${SERVICE_PORT:-3080}
       - MONGO_URI=mongodb://mongodb:27017/LibreChat
       - MEILI_HOST=http://meilisearch:7700
       - RAG_PORT=${RAG_PORT:-8000}
       - RAG_API_URL=http://rag_api:${RAG_PORT:-8000}
+      - DOMAIN_CLIENT=${SERVICE_DOMAIN_CLIENT}
+      - DOMAIN_SERVER=${SERVICE_DOMAIN_SERVER}
+      - OPENAI_API_KEY=${SERVICE_OPENAI_API_KEY}
+      - NO_INDEX=true
+      - DEBUG_LOGGING=true
+      - APP_TITLE=${SERVICE_APP_TITLE:-Practical DevSecOps}
     volumes:
-      - type: bind
-        source: ./.env
-        target: /app/.env
       - ./images:/app/client/public/images
       - ./logs:/app/api/logs
   mongodb:
