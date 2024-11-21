@@ -14,21 +14,28 @@ services:
     environment:
       - HOST=${SERVICE_HOST}
       - PORT=${SERVICE_PORT:-3080}
+      - FQDN=${SERVICE_FQDN}
       - NODE_ENV=production
+      - DOMAIN_CLIENT=https://${SERVICE_FQDN}
+      - DOMAIN_SERVER=https://${SERVICE_FQDN}
+      - ALLOW_REGISTRATION=true
+      - ALLOW_SOCIAL_LOGIN=false
+      - ALLOW_EMAIL_LOGIN=true
+      - SESSION_EXPIRY=1000 * 60 * 15
+      - REFRESH_TOKEN_EXPIRY=(1000 * 60 * 60 * 24) * 7
+      - JWT_SECRET=16f8c0ef4a5d391b26034086c628469d3f9f497f08163ab9b40137092f2909ef
+      - JWT_REFRESH_SECRET=eaa5191f2914e30b9387fd84e254e4ba6fc51b4654968a9b0803b456a54b8418
+      - CREDS_KEY=${SERVICE_CREDS_KEY}
+      - CREDS_IV=${SERVICE_CREDS_IV}
+      - OPENAI_API_KEY=${SERVICE_OPENAI_API_KEY}
+      - NO_INDEX=true
+      - DEBUG_LOGGING=true
+      - APP_TITLE=${SERVICE_APP_TITLE:-Practical DevSecOps}
       - MONGO_URI=mongodb://mongodb:27017/LibreChat
       - MEILI_HOST=http://meilisearch:7700
       - RAG_PORT=${RAG_PORT:-8000}
       - RAG_API_URL=http://rag_api:${RAG_PORT:-8000}
-      - DOMAIN_CLIENT=${SERVICE_DOMAIN_CLIENT}
-      - DOMAIN_SERVER=${SERVICE_DOMAIN_SERVER}
-      - OPENAI_API_KEY=${SERVICE_OPENAI_API_KEY}
-      - CREDS_KEY=${SERVICE_CREDS_KEY}
-      - CREDS_IV=${SERVICE_CREDS_IV}
-      - JWT_SECRET=16f8c0ef4a5d391b26034086c628469d3f9f497f08163ab9b40137092f2909ef
-      - JWT_REFRESH_SECRET=eaa5191f2914e30b9387fd84e254e4ba6fc51b4654968a9b0803b456a54b8418
-      - NO_INDEX=true
-      - DEBUG_LOGGING=true
-      - APP_TITLE=${SERVICE_APP_TITLE:-Practical DevSecOps}
+      - ALLOW_UNVERIFIED_EMAIL_LOGIN=true
     volumes:
       - type: bind
         source: ./librechat.yaml
