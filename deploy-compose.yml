@@ -21,13 +21,18 @@ services:
       - ALLOW_REGISTRATION=true
       - ALLOW_SOCIAL_LOGIN=false
       - ALLOW_EMAIL_LOGIN=true
+      - ALLOW_PASSWORD_RESET=true
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL}
       - SESSION_EXPIRY=1000 * 60 * 15
       - REFRESH_TOKEN_EXPIRY=(1000 * 60 * 60 * 24) * 7
-      - JWT_SECRET=16f8c0ef4a5d391b26034086c628469d3f9f497f08163ab9b40137092f2909ef
-      - JWT_REFRESH_SECRET=eaa5191f2914e30b9387fd84e254e4ba6fc51b4654968a9b0803b456a54b8418
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
       - CREDS_KEY=${SERVICE_CREDS_KEY}
       - CREDS_IV=${SERVICE_CREDS_IV}
       - OPENAI_API_KEY=${SERVICE_OPENAI_API_KEY}
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
       - NO_INDEX=true
       - DEBUG_LOGGING=true
       - APP_TITLE=${SERVICE_APP_TITLE:-Practical DevSecOps}
@@ -56,8 +61,10 @@ services:
     image: getmeili/meilisearch:v1.7.3
     restart: always
     environment:
+      - SEARCH=true
       - MEILI_HOST=http://meilisearch:7700
       - MEILI_NO_ANALYTICS=true
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
     volumes:
       - ./meili_data_v1.7:/meili_data
 
@@ -65,9 +72,9 @@ services:
     container_name: vectordb
     image: ankane/pgvector:latest
     environment:
-      - POSTGRES_DB=mydatabase
-      - POSTGRES_USER=myuser
-      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     restart: always
     volumes:
       - pgdata2:/var/lib/postgresql/data
@@ -76,10 +83,10 @@ services:
     container_name: rag_api
     image: ghcr.io/danny-avila/librechat-rag-api-dev-lite:latest
     environment:
-      - POSTGRES_DB=mydatabase
-      - POSTGRES_USER=myuser
-      - POSTGRES_PASSWORD=mypassword
-      - DB_HOST=vectordb
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_HOST=${DB_HOST}
       - RAG_PORT=${RAG_PORT:-8000}
       - OPENAI_API_KEY=${SERVICE_OPENAI_API_KEY}
     restart: always
